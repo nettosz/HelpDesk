@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<body>
+    <div class="fade-in-image">
+
+        <h1 class="title">
+            Categorias:
+    </h1>
+    <div class="chamados">
+        <div class="prioridade">
+            {%for cat in cats.keys()%}
+            <p>
+                <a class="btn btn-primary cats-btn" data-toggle="collapse" href="#{{cat}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  {{cat}}
+                </a>
+            </p>
+              <div class="collapse" id="{{cat}}">
+                <div class="card card-body">
+                    {%if cats[cat]%}
+                        {%for scat in cats[cat]%}
+                        <p class="cat" id="{{scat}}">
+                            {{scat}}
+                        </p>
+                        <script>
+                            $("#{{scat}}").dblclick(
+                                () => {
+                                    fetch("/delete_cat/{{cat}}/{{scat}}").then(data => {
+                                        $("#root").html(data)
+                                    })
+                                }
+                            )
+                        </script>
+                        {%endfor%}
+                    {%endif%}
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+</div>
+</body>
+</html>

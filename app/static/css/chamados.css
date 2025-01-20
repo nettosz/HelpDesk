@@ -1,0 +1,68 @@
+.div-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.btn-etp {
+    margin: 8px;
+}
+
+.div-margin {
+    margin: 8px;
+    display: flex;
+    flex-direction: row;
+}
+
+.div-column {
+    display: flex;
+    flex-direction: column;
+}
+.div-cards {
+    width: 50%;
+}
+
+.title-etp {
+    color: aliceblue;
+    font-weight: bold;
+}
+
+.etcard {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 6rem;
+}
+
+.descr {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.scroll-etp {
+    max-height: 18rem;
+    overflow-y: overlay;
+}
+
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #383838;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 3px solid #ffffff;
+  }
+  

@@ -1,0 +1,412 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+
+    font-size: 14px;
+}
+
+a {
+    cursor: default;
+
+    text-transform: uppercase;
+}
+
+h1 {
+    text-transform: uppercase;
+}
+
+.cat:hover {
+    background: #263238;
+}
+
+p {
+    color: white;
+}
+
+h1, h2, p {
+    margin: 0;
+}
+
+h1 {
+    font-size: 1.5rem;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:#343a40;
+}
+
+html, body{
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+}
+
+.title {
+    padding: 0.5rem;
+    color: white;
+}
+
+.pri {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 24.39%;
+
+}
+
+.cats-btn {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.col-2{
+    display: flex;
+    flex-direction: row;
+    border-right: 1px solid #343a40;
+}
+
+.col-5 {
+    border-right: 1px solid #343a40;
+}
+
+.btn {
+    background: #495057;
+    color: #ffffff;
+    border: none;
+}
+
+.btn:hover {
+    background: #263238;
+}
+
+.nav-item {
+    color: white;
+    background: #495057;
+    border: none;
+    border-radius: 5px;
+
+    margin-top: 0.5rem;
+}
+
+.tcad {
+    margin: 0.5rem;
+    background: #495057;
+    color: #ffffff;
+    border: none;
+}
+
+.tcad::placeholder {
+    color: #ffffff;
+}
+
+.nav-item:hover {
+    background: #263238;
+    color: white;
+}
+
+.container-fluid {
+    margin: 1rem;
+}
+
+#userlat {
+    padding: 1rem;
+    background: #495057;
+    border-radius: 20px;
+}
+
+#userlat:hover div p{
+    color: white;
+}
+.container-fluid {
+    margin: 0;
+    border-radius: 20px;
+    box-shadow: 3px 8px 16px #000000;
+    height: 97vh;
+    width: 98vw;
+    margin: 0px;
+    background-color: #22262a;
+}
+
+.block {
+    padding: 1rem;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card a {
+    text-decoration: none;
+    padding: 5px;
+    color: rgb(255, 255, 255);
+}
+
+.card {
+    padding: 0.5rem;
+    background:#455A64;
+    border: none;
+    border-radius: 0.1rem;
+}
+
+.chact {
+    text-decoration: none;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius:100px;
+
+    background: #495057;
+    color: white;
+}
+
+.chact:hover {
+    background: #263238;
+    color: white;
+    text-decoration: none;
+}
+
+.file {
+    margin: 8px;
+    padding: 6px 12px;
+    background: #495057;
+    color: #212121;
+    border: none;
+}
+
+.row {
+    height: 100%;
+}
+
+.llabel {
+    color: white;
+}
+
+.anexo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 2rem;
+    margin: 0.5rem 0;
+    border-radius: 100px;
+    background: #495057;
+}
+
+.anexo a {
+    color: black;
+}
+
+#add {
+    margin: 0.5rem;
+}
+
+.cat {
+    padding: 0.3rem;
+    border: 1px solid gray;
+    border-radius: 10px;
+    margin: 2px;
+}
+
+.em {
+    background: #8b0000;
+    width: 5px;
+    padding: 0.3rem;
+    border-radius: 20px;
+}
+
+.u {
+    width: 5px;
+    padding: 0.3rem;
+    border-radius: 20px;
+    
+    background: #ff8c00;
+}
+
+.pu {
+    background: #88ff00;
+    width: 5px;
+    padding: 0.3rem;
+    border-radius: 20px;
+}
+
+.nu {
+    background: #0e6cd1;
+    width: 5px;
+    padding: 0.3rem;
+    border-radius: 20px;
+}
+
+.null {
+    background: white;
+    width: 5px;
+    padding: 0.3rem;
+    border-radius: 20px;
+}
+
+.overflow {
+    max-height: 75vh;
+    overflow-y: overlay;
+}
+
+.chamados {
+    max-height: 85vh;
+    overflow: hidden;
+}
+
+.att {
+    margin: 0px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.fade-in-image {
+    white-space: nowrap;
+    overflow: hidden;
+    animation: fadeIn 0.5s; }
+
+@keyframes fadeIn {
+    0% { opacity: 0; 
+        transform: translateY(-100%);}
+    100% { opacity: 1; 
+        transform: translateY(0%);}
+  }
+
+.slider {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.slider {
+    animation: slide 1s;
+}
+
+@keyframes slide {
+    0% {transform: translateY(-100%);
+    }
+
+    100% {transform: translateY(0%);
+    };
+}
+
+.srch {
+    color: #495057;
+    background-color: aliceblue;
+    border-radius: 5px;
+    border: none;
+    width: 99%;
+}
+
+.bset {
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    margin: 5px;
+}
+
+.bset:hover {
+    filter: brightness(0.4);
+}
+
+.prior {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pbtns {
+    display: flex;
+    flex-direction: row;
+}
+
+.overflow-new {
+    max-height: 87vh;
+    overflow-y: overlay;
+}
+
+.bem {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #8b0000;
+    border-radius: 50%; /* Makes it a circle */
+    margin-right: 5px; /* Adjust as needed for spacing */
+}
+
+.bu {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #ff8c00;
+    border-radius: 50%; /* Makes it a circle */
+    margin-right: 5px; /* Adjust as needed for spacing */
+}
+
+.bpu {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #88ff00;
+    border-radius: 50%; /* Makes it a circle */
+    margin-right: 5px; /* Adjust as needed for spacing */
+}
+
+.bnu {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: #0e6cd1;
+    border-radius: 50%; /* Makes it a circle */
+    margin-right: 5px; /* Adjust as needed for spacing */
+}
+
+.active {
+    background: #263238;
+    color: white
+}
+
+.active-pri {
+    padding-bottom: 1rem;
+    margin-bottom: 0;
+    background: #455A64;
+    border-top-left-radius: 0.25rem; /* Adjust the value as needed */
+    border-top-right-radius: 0.25rem; /* Adjust the value as needed */
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.nav-link {
+    padding: .3rem;
+}
+
+.title-proc {
+    padding-left: 0.5rem;
+}
+
+.hist {
+    margin: 5px;
+}
+
+#hist-data {
+    max-height: 93vh;
+    overflow-y: auto;
+}
+
+.user-margin {
+    margin-bottom: 5px;
+}
+
+.value {
+    text-wrap: wrap;
+}

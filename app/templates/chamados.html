@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<body>
+    <div class="fade-in-image">
+
+        <h1 class="title">
+        <div class="ch">
+            Niveis de Atendimento:
+        </div>
+    </h1>
+    <div class="chamados">
+        <div class="prioridade">
+            <p id="menu-cats">
+                <a class="btn btn-primary pri" id="show-eme">
+                    Emergencia ({{ chamados|selectattr('prioridade', 'eq', 1)|list|length }})
+                    <span class="bem"></span>
+                </a>
+                <a class="btn btn-primary pri" id="show-urg">
+                    Urgente ({{ chamados|selectattr('prioridade', 'eq', 2)|list|length }})
+                    <span class="bu"></span>
+                </a>
+                <a class="btn btn-primary pri" id="show-nm">
+                    Normal ({{ chamados|selectattr('prioridade', 'eq', 3)|list|length }})
+                    <span class="bpu"></span>
+                </a>
+                <a class="btn btn-primary pri " id="show-nurg">
+                    Não urgente ({{ chamados|selectattr('prioridade', 'eq', 4)|list|length }})
+                    <span class="bnu"></span>
+                </a>
+            </p>
+            <div>
+                <div class="card card-body overflow" id="eme">
+                    {%for chamado in chamados%}
+                    {%if admin%}
+                    {%if chamado.prioridade == 1 and chamado.p_defined == "1"%}
+                    
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+                        </a>
+                    {%endif%} 
+                    {%else%}
+                    {%if chamado.prioridade == 1%}
+                    <a href="#" class="cat" id="ch-{{chamado._id}}">
+                        <p>
+                            Problema: {{chamado.problema}}
+                        </p>
+                        <p>
+                            Status: {{chamado.estado}}
+                        </p>
+                        <p>
+                            Aberto por: {{chamado.autor}}
+                        </p>
+                    </a>
+                    {%endif%}
+                    {%endif%}
+                {%endfor%}
+                </div>
+                <div class="card card-body overflow" id="urg">
+                    {%for chamado in chamados%}
+                    {%if admin%}
+                    {%if chamado.prioridade == 2 and chamado.p_defined == "1"%}
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+
+                        </a>
+                    {%endif%} 
+                    {%else%}
+                    {%if chamado.prioridade == 2%}
+                    <a href="#" class="cat" id="ch-{{chamado._id}}">
+                        <p>
+                            Problema: {{chamado.problema}}
+                        </p>
+                        <p>
+                            Status: {{chamado.estado}}
+                        </p>
+                        <p>
+                            Aberto por: {{chamado.autor}}
+                        </p>
+
+                    </a>
+                    {%endif%}
+                    {%endif%}
+                {%endfor%}
+                </div>
+                <div class="card card-body overflow" id="norm">
+                    {%for chamado in chamados%}
+                    {%if admin%}
+                    {%if chamado.prioridade == 3 and chamado.p_defined == "1"%}
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+
+                        </a>
+                        {%endif%}
+                        {%else%}
+                        {%if chamado.prioridade == 3%}
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+
+                        </a>
+                        {%endif%}
+                        {%endif%}
+                        {%endfor%}
+                </div>
+                <div class="card card-body overflow" id="purg">
+                    {%for chamado in chamados%}
+                    {%if admin%}
+                    {%if chamado.prioridade == 4 and chamado.p_defined == "1"%}
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+
+                        </a>
+                        {%endif%}
+                        {%else%}
+                        {%if chamado.prioridade == 4%}
+                        <a href="#" class="cat" id="ch-{{chamado._id}}">
+                            <p>
+                                Problema: {{chamado.problema}}
+                            </p>
+                            <p>
+                                Status: {{chamado.estado}}
+                            </p>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+
+                        </a>
+                        {%endif%}
+                        {%endif%}
+                        {%endfor%}
+                </div>
+            </div>
+        </div>
+          
+    </div>
+    <script>
+        $("#eme").hide();
+        $("#urg").hide();
+        $("#norm").hide();
+        $("#purg").hide();
+
+        $("#show-eme").click(() => {
+            $("#eme").show();
+            $("#urg").hide();
+            $("#norm").hide();
+            $("#purg").hide();
+        })
+
+        $("#show-urg").click(() => {
+            $("#eme").hide();
+            $("#urg").show();
+            $("#norm").hide();
+            $("#purg").hide();
+        })
+
+        $("#show-nm").click(() => {
+            $("#eme").hide();
+            $("#urg").hide();
+            $("#norm").show();
+            $("#purg").hide();
+        })
+        
+        $("#show-nurg").click(() => {
+            $("#eme").hide();
+            $("#urg").hide();
+            $("#norm").hide();
+            $("#purg").show();
+        })
+
+        {% for chamado in chamados%}
+        try {
+            document.getElementById("ch-{{chamado._id}}").onclick = function (){
+            const update_url = {{ url_for("bp.ticket", id=chamado._id)|tojson }}
+
+            fetch(update_url)
+            .then(response => response.text())
+            .then(text => $("#forms").html(text)).then(() => {
+                $("#hist-data").hide()
+            }
+            )
+            }
+        } catch (error) {
+            
+        }
+
+        {%endfor%}
+    </script>
+
+<script>
+    // Add active class to the current button (highlight it)
+    var header = document.getElementById("menu-cats");
+    var btns = header.getElementsByClassName("pri");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function() {
+      var current = document.getElementsByClassName("active-pri");
+      if (current.length > 0) { 
+        current[0].className = current[0].className.replace(" active-pri", "");
+      }
+      this.className += " active-pri";
+      });
+    }
+    </script>
+</div>
+</body>
+</html>

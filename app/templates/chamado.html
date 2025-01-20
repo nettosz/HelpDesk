@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<body>
+    <div id="chm-menu">
+
+    <div class="title cat etcard" style="height: auto;" id="chm-box">
+
+        <div class="descr">
+        <div>
+        
+        <p>
+            Problema: {{chamado.problema}}
+        </p>
+        <p>
+            Categoria: {{chamado.ativo}}
+        </p>
+        <p>
+            {%if chamado.prioridade == 1%}
+            Prioridade: Emergencia
+            {%endif%}
+
+            {%if chamado.prioridade == 2%}
+            Prioridade: Urgente
+            {%endif%}
+
+            {%if chamado.prioridade == 3%}
+            Prioridade: Normal
+            {%endif%}
+
+            {%if chamado.prioridade == 4%}
+            Prioridade: Não Urgente
+            {%endif%}
+
+        </p>
+        <p>
+            Estado: {{chamado.estado}}
+        </p>
+        <p>
+            Posição na fila: {{pos}}
+        </p>
+        </div>
+        <div>
+        
+        <p>
+            Aberto em: {{chamado.data_hora_a.strftime("%d/%m/%Y %H:%M")}}
+        </p>
+
+        <p>
+            Departamento: {{chamado.dep}}
+        </p>
+        <p>
+            ID: {{chamado._id}}
+        </p>
+
+        {%if chamado.periodo %}
+        <p>
+            Duração do Chamado: {{chamado.periodo}}
+        </p>
+        {%endif%}
+
+        {%if chamado.estado == "Fechado" %}
+        <p>
+            Fechado por: {{r_user}}
+        </p>
+        {%endif%}
+
+        {%if chamado.att %}
+        <p>
+            Atendido por: {{chamado.att}}
+        </p>
+        {%endif%}
+        </div>
+        </div>
+
+        {%if chamado.file %}
+        <p class="anexo">
+            <a href="{{chamado.file}}">Anexo</a>
+        </p>
+        {%endif%}
+
+        {%if admin%}
+        {%if chamado.estado != "Fechado"%}
+        <div>
+            <form method="post" action="/att_chamado">
+                <select class="form-control tcad att" name="att" id="att">
+                    {%for user in users%}
+                        <option value="{{user.nome}}">{{user.nome}}</option>
+                    {%endfor%}
+                </select>
+                <input type="text", name="just", class="form-control tcad att" placeholder="Justificativa para reatribuição - Obrigatorio" required>
+                <input type="hidden" name="id" value="{{chamado._id}}">
+                <button class="chact form-control" type="submit">Reatribuir chamado</a>
+            </form>
+        </div>
+        {%endif%}
+        {%endif%}
+        <div class="att">
+            {%if chamado.estado == "Aberto" or chamado.estado == "Em Atendimento"%}
+            <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Encerrar</a>
+            {%endif%}
+            
+            {%if admin or terceiro%}
+                {%if chamado.estado == "Aberto"%}
+                <a class="chact" href="{{url_for("bp.update_state", state="Em Atendimento", id=chamado._id)}}">Resolver</a>
+                {%endif%}            
+    
+                {%if chamado.estado == "Fechado"%}
+                <a class="chact" href="{{url_for("bp.update_state", state="Em Atendimento", id=chamado._id)}}">Reabrir</a>
+                {%endif%}
+
+                {%if not terceiro%}
+                <a class="chact" href="{{url_for("bp.delete", data="ticket", id=chamado._id)}}">Excluir</a>
+                {%endif%}
+            {%endif%}
+                <a class="chact" id="view-hist" href="#">Historico</a>
+        </div>
+
+    </div>
+    
+    {%if chamado.estado == "Em Atendimento" or chamado.estado == "Fechado"%}
+    <div class="title">
+        <h1 class="title-proc">
+            Procedimentos:
+        </h1>
+        {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
+        <div class="div-row">
+            <input type="text" class="form-control tcad" id="add_etp">
+            <button class="btn btn-primary btn-etp" id="c_etp">add</button>
+        </div>
+        {%else%}
+        <div class="div-row">
+            <input type="text" class="form-control tcad" id="add_etp" disabled>
+            <button class="btn btn-primary btn-etp" id="c_etp" disabled>add</button>
+        </div>
+        {%endif%}
+
+        <div id="div-etapas">
+            
+        </div>
+        
+        <script>
+            document.getElementById("c_etp").onclick = function (){
+            let v = $("#add_etp").val()
+            
+            if (v) {
+                const update_url = {{ url_for("bp.create_etapa", ticket_id=chamado._id)|tojson }}+"/"+v
+    
+                fetch(update_url)
+                .then(response => response.text())
+                .then(text => $("#div-etapas").html(text))
+            }
+        }
+            fetch({{ url_for("bp.get_etapas",ticket_id=chamado._id)|tojson }})
+            .then(response => response.text())
+            .then(text => $("#div-etapas").html(text))
+        
+
+        </script>
+    </div>
+    {%endif%}
+    </div>
+
+    <script>
+        $("#view-hist").click(
+            () => {
+                $("#chm-menu").hide()
+                $("#hist-data").show()
+            }
+        )
+    </script>
+    <div class="div-column" id="hist-data">
+        {{chamado.historico | safe}}
+    </div>
+</body>
+</html>

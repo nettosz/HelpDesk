@@ -1,0 +1,116 @@
+{%if admin%}
+<div class="ctickets">
+    <h1 class="title">
+        Novos Chamados:
+    </h1>
+
+    <div class="card card-body overflow-new">
+        {%for chamado in chamados%}
+            {%if chamado.p_defined == "0"%}
+                <div class="cat">
+                    <p>
+                        Problema: {{chamado.problema}}
+                    </p>
+                    <p>
+                        Status: {{chamado.estado}}
+                    </p>
+                    
+                    <div class="prior">
+                        <div>
+                            <p>
+                                Aberto por: {{chamado.autor}}
+                            </p>
+                        </div>
+                        
+                        <div class="pbtns">
+                            <input type="hidden" value="{{chamado._id}}" id="chid{{chamado._id}}">
+
+                            <div class="em bset" id="setm{{chamado._id}}">
+                            </div>
+
+                            <div class="u bset" id="setu{{chamado._id}}">
+                            </div>
+                        
+                            <div class="pu bset" id="setpu{{chamado._id}}">
+                            </div>
+                        
+                            <div class="nu bset" id="setnu{{chamado._id}}">
+                            </div>
+                        </div>
+                        </div>
+
+                </div> 
+        <script>
+            
+            $("#setm{{chamado._id}}").click(
+                () => {
+                    update_pr_{{chamado._id}}('1')
+                }
+            )
+            $("#setu{{chamado._id}}").click(
+                () => {
+                    update_pr_{{chamado._id}}('2')
+                }
+            )
+            $("#setpu{{chamado._id}}").click(
+                () => {
+                    update_pr_{{chamado._id}}('3')
+                }
+            )
+            $("#setnu{{chamado._id}}").click(
+                () => {
+                    update_pr_{{chamado._id}}('4')
+                }
+            )
+            
+            function update_pr_{{chamado._id}}(n){
+                const update_url = {{ url_for("bp.set_pr")|tojson }}+"/"+ $("#chid{{chamado._id}}").val() +"/"+ n
+        
+                const update_url_tck = {{ url_for("bp.tickets")|tojson }}
+
+                
+                fetch(update_url)
+                .then(response => response.text())
+                .then(text => $("#forms").html(text)).then(
+                    () => {
+                        fetch(update_url_tck)
+                        .then(response => response.text())
+                        .then(text => $("#root").html(text))
+                    }
+                )
+            }
+        
+        </script>
+        {%endif%}
+        {%endfor%}
+        </div>
+</div>
+{%elif not terceiro%}
+<div class="ctickets">
+    <h1 class="title">
+        Abrir Chamado:
+    </h1>
+    <form method="post" enctype="multipart/form-data" id="tsub">
+        {{form.hidden_tag()}}
+        {{form.problema(class="form-control tcad", placeholder="Descrição do problema")}}
+        <select name="ativo" id="atv" class="form-control tcad">
+            {%for cat in cats.keys()%}
+                <optgroup label="{{cat}}">
+                    {%for c in cats[cat]%}
+                        <option value="{{cat}} -> {{c}}">{{c}}</option>
+                    {%endfor%}
+                </optgroup>
+            {%endfor%}
+        </select>
+        
+        {{file.file(class="form-control file", type="file")}}
+        <div class="input-group-append input">
+            <button class="btn btn-primary" type="submit" formaction="/create_ticket" id="enviar">Enviar</button>
+        </div>
+    </form>
+</div>
+{%else%}
+<div>
+    ...
+</div>
+{%endif%}

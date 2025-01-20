@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<body>
+    <div class="fade-in-image">
+
+        <h1 class="title">
+            Usuarios:
+    </h1>
+    <div class="usuarios">
+        {%for user in users%}
+        <div class="card card-body user-margin">
+                <a href="#" id="{{user._id}}">
+                    <p>
+                        Nome: {{user.nome}}
+                    </p>
+                    <p>
+                        Departamento: {{user.dep}}
+                    </p>
+                </a>     
+        </div>
+        {%endfor%}
+    </div>
+
+    <script>
+        {% for user in users%}
+            document.getElementById("{{user._id}}").onclick = function (){
+            const update_url = {{ url_for("bp.view_user", id=user._id)|tojson }}
+
+            fetch(update_url)
+            .then(response => response.text())
+            .then(text => $("#forms").html(text))
+        }
+        {%endfor%}
+        </script>
+        </div>
+</body>
+</html>

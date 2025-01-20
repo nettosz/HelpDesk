@@ -1,0 +1,46 @@
+<div class="cbase" >
+    <h1 class="title">
+        Criar Novo Procedimento:
+    </h1>
+    <form method="post" enctype="multipart/form-data" action="/base_create" id="prc">
+        {{form.hidden_tag()}}
+        {{form.titulo(class="form-control tcad", placeholder="Titulo", required=form.titulo.flags.required)}}
+
+        <div id="etapas" class="form-control tcad" style="display: flex; flex-direction: column; overflow: auto; height: 15rem;">
+
+        </div>
+        {{form.procedimento(type="hidden", id="pd")}}
+    </form>
+
+    <input type="text" name="proc" id="proc" class="form-control tcad" placeholder="Etapa" required>
+    <div class="input-group-append input">
+        <button class="btn btn-primary" id="add">
+            Adicionar Etapa
+        </button>
+        <button class="btn btn-primary" type="submit" id="env" form="prc">Enviar</button>
+    </div>
+
+    <script>
+        var n = 0
+        
+        document.getElementById("add").onclick = function (){
+            let proc = $("#proc").val()
+            if (proc) {
+                
+                $("#etapas").html(
+                    $("#etapas").html() + "<p>"+ n + " - " + proc + "</p>"
+                )
+
+                $("#pd").val(
+                    $("#pd").val() + " " + $("#proc").val()
+                )
+                n += 1
+            }
+        }
+
+        // $("#env").click(function(){
+        //         $("#prc").submit()
+        //     }
+        // )
+    </script>
+</div>

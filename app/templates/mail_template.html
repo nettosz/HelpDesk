@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de Suporte</title>
+    <style>
+        .body-cl {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .email-container-x {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #0073e6;
+            color: #ffffff;
+            padding: 5px;
+            text-align: center;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            height: 100%;
+            text
+        }
+        
+        .body-content {
+            padding: 5px;
+            flex-grow: 1;
+
+            width: 100%;
+        }
+
+        .body-content p {
+            color: black;
+            text-wrap: wrap;
+        }
+
+        .ticket-summary {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 5px 0;
+        }
+
+        .ticket-summary .label {
+            font-weight: bold;
+            padding: 2px;
+            background-color: #f2f2f2;
+        }
+
+        .ticket-summary .value {
+            padding: 2px;
+            background-color: #ffffff;
+            text-wrap: pretty;
+        }
+
+        .footer {
+            background-color: #f2f2f2;
+            color: #000000;
+            text-align: center;
+            padding: 2px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .footer p {
+            margin: 0;
+            color: #000000;
+        }
+
+    </style>
+</head>
+<body class="body-cl">
+    <div class="email-container-x">
+        <div class="header">
+            <h1>Notificação de Ticket de Suporte</h1>
+        </div>
+        <div class="body-content">
+            <p>Prezado {{user}},</p>
+            {% if type == 1 %}
+                <p>Seu chamado foi recebido e está sendo analisado. Aqui está um resumo do seu chamado:</p>
+            {% elif type == 2 %}
+                <p>Seu chamado está em atendimento.</p>
+                <p>Verificar status pela aba: Em atendimento -> {{nivel}}</p>
+            {% elif type == 3 %}
+                <p>O seu chamado foi encerrado por: {{nome}}</p>
+                <p>Caso seu chamado ainda não tenha sido resolvido, responda esse email.</p>
+            {% elif type == 4 %}
+                <p>O chamado foi atribuido para: {{rtb}}</p>
+                <p>Justificativa: {{info}}</p>
+            {% elif type == 5 %}
+                <p>Nova atualização no chamado, ID: {{num}}</p>
+                <p>Atualização: {{etapa}}</p>
+            {% endif %}
+            
+            <table class="ticket-summary">
+                <tr>
+                    <td class="label">ID do Ticket:</td>
+                    <td class="value">{{num}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Assunto:</td>
+                    <td class="value">{{sys}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Descrição:</td>
+                    <td class="value">{{prob}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Prioridade:</td>
+                    {%if nivel == 1%}
+                        <td class="value">EMERGENCIA</td>
+                    {%elif nivel == 2%}
+                        <td class="value">URGENTE</td>
+                    {%elif nivel == 3%}
+                        <td class="value">NORMAL</td>
+                    {%elif nivel == 4%}
+                        <td class="value">NÃO URGENTE</td>
+                    {%else%}
+                        <td class="value">NÃO DEFINIDO</td>
+                    {%endif%}
+                </tr>
+            </table>
+            <p>Retornaremos em breve.</p>
+            <p>Atenciosamente,</p>
+            <p>TI AMCEL</p>
+            <div class="footer">
+                <p>&copy; 2024 Helpdesk - amcel - Data-Hora: {{data}}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

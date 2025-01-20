@@ -1,0 +1,90 @@
+<div class="div-row div-margin">
+    <div class="div-column div-cards">
+        <p class="title-etp">
+            Pendentes
+        </p>
+        <div class="scroll-etp">
+        {%for etapa in etapas%}
+        {%if etapa.status == "1"%}
+        <div class="card card-body">
+            <a href="#" class="cat etcard" id="ch-2">
+                <p class="text-wrap text-break">
+                    {{etapa.texto}}
+                </p>
+                <div class="u">
+
+                </div>
+            </a>
+            {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
+            <div>
+                <button class="btn btn-primary" id="et_{{etapa._id}}">
+                    >
+                </button>
+                <button class="btn btn-primary" id="ex_{{etapa._id}}">
+                    <img src="../static/files/icons/trash.png" alt="" width="12">
+                </button>
+                
+            </div>
+            {%endif%}
+        </div>
+        {%endif%}
+        {%endfor%}
+        </div>
+    </div>
+
+    <div class="div-column div-cards">
+        <p class="title-etp">
+            Resolvidos
+        </p>
+        <div class="scroll-etp">
+        {%for etapa in etapas%}
+        {%if etapa.status == "0"%}
+        <div class="card card-body">
+            <a href="#" class="cat etcard" id="ch-2">
+                <p class="text-wrap text-break">
+                    {{etapa.texto}}
+
+                </p>
+                
+                <div class="nu">
+
+                </div>
+            </a>
+            {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
+            <div>
+                <button class="btn btn-primary" id="et_{{etapa._id}}">
+                    <
+                </button>
+                <button class="btn btn-primary" id="ex_{{etapa._id}}">
+                    <img src="../static/files/icons/trash.png" alt="" width="12">
+                </button>
+            </div>
+            {%endif%}
+        </div>
+        {%endif%}
+        {%endfor%}
+        </div>
+    </div>
+    {%for etapa in etapas%}
+    <script>
+        document.getElementById("et_{{etapa._id}}").onclick = function (){
+        const update_url = {{ url_for("bp.update_etapa",etapa_id=etapa._id)|tojson }}
+
+        fetch(update_url)
+        .then(response => response.text())
+        .then(text => $("#div-etapas").html(text))
+
+    }
+
+    document.getElementById("ex_{{etapa._id}}").onclick = function (){
+        const update_url = {{ url_for("bp.delete_etapa",etapa_id=etapa._id)|tojson }}
+
+        fetch(update_url)
+        .then(response => response.text())
+        .then(text => $("#div-etapas").html(text))
+
+    }
+
+    </script>
+    {%endfor%}
+</div>

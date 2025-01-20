@@ -1,0 +1,131 @@
+
+<div style="display:flex; flex-direction:column; padding: 0.3rem;">
+    <style>
+        .popup-container {
+            position: relative;
+            display: inline-block;
+            margin: 0;
+        }
+
+        .popup-content {
+            display: none;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+            border-radius: 5px;
+            z-index: 1;
+            top: 25px;
+        }
+        
+        .popup-container:hover .popup-content {
+            display: block;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin:0;
+            border-radius: 8px;
+        }
+
+        li {
+            padding: 10px;
+            transition: background-color 0.3s;
+            user-select: none;
+        }
+
+        li:hover {
+            background-color: #ddd;
+        }
+
+        option:hover{
+            background-color: #ddd;
+        }
+        
+        .selected {
+            background-color: #ddd;
+        }
+
+    </style>
+
+    <div style="display: flex;flex-direction: row;justify-content: space-around; padding: 0.2rem;">
+        <div style="display:flex; flex-direction:column; padding: 0.3rem;">
+            <p>
+                {{user.nome}}
+            </p>
+            <p>
+                {{user.dep}}
+            </p>
+        </div>
+        <img src="{{user.file}}" alt="user icon" style="width: 3.5rem; height: 3.5rem; border-radius: 50%; padding: 0.3rem;">
+    </div>
+    <div style="display: flex;flex-direction: row;" class="popup-container tcad">
+        <div style="display: flex;flex-direction: row;">
+            {%if user.admin%}
+            <input type="text" class="srch" id="search">
+            {%endif%}
+            <input type="hidden" name="option" id="catf" value="0">
+        </div>
+
+        <div class="popup-content tcad">
+            <ul>
+                <li id="f0">0 = Usuario</li>
+                <li id="f1">1 = Departamento</li>
+                <li id="f2">2 = Nivel</li>
+                <li id="f3">3 = Categoria</li>
+                <li id="f4">4 = Descriçao</li>
+            </ul>
+        </div>
+        <script>
+            $("#f0").click(() => {
+                $("#catf").val("0")
+
+                $("#f0").addClass("selected")
+                $("#f1").removeClass("selected")
+                $("#f2").removeClass("selected")
+                $("#f3").removeClass("selected")
+                $("#f4").removeClass("selected")
+            })
+
+            $("#f1").click(() => {
+                $("#catf").val("1")
+
+                $("#f0").removeClass("selected")
+                $("#f1").addClass("selected")
+                $("#f2").removeClass("selected")
+                $("#f3").removeClass("selected")
+                $("#f4").removeClass("selected")
+            })
+
+            $("#f2").click(() => {
+                $("#catf").val("2")
+
+                $("#f0").removeClass("selected")
+                $("#f1").removeClass("selected")
+                $("#f2").addClass("selected")
+                $("#f3").removeClass("selected")
+                $("#f4").removeClass("selected")
+            })
+
+            $("#f3").click(() => {
+                $("#catf").val("3")
+
+                $("#f0").removeClass("selected")
+                $("#f1").removeClass("selected")
+                $("#f2").removeClass("selected")
+                $("#f3").addClass("selected")
+                $("#f4").removeClass("selected")
+            })
+
+            $("#f4").click(() => {
+                $("#catf").val("4")
+
+                $("#f0").removeClass("selected")
+                $("#f1").removeClass("selected")
+                $("#f2").removeClass("selected")
+                $("#f3").removeClass("selected")
+                $("#f4").addClass("selected")
+            })
+        </script>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<body>
+    <div class="fade-in-image">
+
+        <h1 class="title">
+            Procedimentos:
+    </h1>
+    <div class="usuarios">
+        {%for proc in procs%}
+        <div class="card card-body">
+                <a href="#" id="{{proc._id}}">
+                    <p>
+                        Titulo: {{proc.titulo}}
+                    </p>
+                </a>     
+        </div>
+        {%endfor%}
+    </div>
+    
+    <script>
+        {% for proc in procs%}
+            document.getElementById("{{proc._id}}").onclick = function (){
+            const update_url = {{ url_for("bp.base_content", id=proc._id)|tojson }}
+
+            fetch(update_url)
+            .then(response => response.text())
+            .then(text => $("#forms").html(text))
+        }
+        
+        {%endfor%}
+        </script>
+        </div>
+</body>

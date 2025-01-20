@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<body>
+    <div class="title">
+        <h1>
+            Nome: {{user.nome}}
+        </h1>
+        <p>
+            Departamento: {{user.dep}}
+        </p>
+        <p>
+            Email: {{user.email}}
+        </p>
+
+        {%if user.admin%}
+        <p>
+            Usuario: Administrador
+        </p>
+
+        {%elif user.terceiro%}
+        <p>
+            Usuario: Terceiro
+        </p>
+        {% else %}
+
+        <p>
+            Usuario: Normal
+        </p>
+        {%endif%}
+        <div>
+            <a class="chact" href="{{url_for("bp.delete", data="user", id=user._id)}}">Excluir</a>
+            {%if user.admin%}
+                <a class="chact" href="{{url_for("bp.make_admin", data="0", id=user._id)}}">Desfazer Admin</a>
+            {%else%}
+                <a class="chact" href="{{url_for("bp.make_admin", data="1", id=user._id)}}">Tornar Admin</a>
+            {%endif%}
+
+            {%if user.terceiro%}
+                <a class="chact" href="{{url_for("bp.make_terceiro", data="0", id=user._id)}}">Desfazer Terceiro</a>
+            {%else%}
+                <a class="chact" href="{{url_for("bp.make_terceiro", data="1", id=user._id)}}">Tornar Terceiro</a>
+            {%endif%}
+
+            <p>
+                Excluir apaga todos os chamados do usuario
+            </p>
+        </div>
+    </div>
+</body>
+</html>     
