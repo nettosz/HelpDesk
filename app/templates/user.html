@@ -28,7 +28,7 @@
         </p>
         {%endif%}
         <div>
-            <a class="chact" href="{{url_for("bp.delete", data="user", id=user._id)}}">Excluir</a>
+            <a class="chact" id="delete_btn" href="{{url_for("bp.delete", data="user", id=user._id)}}">Excluir</a>
             {%if user.admin%}
                 <a class="chact" href="{{url_for("bp.make_admin", data="0", id=user._id)}}">Desfazer Admin</a>
             {%else%}

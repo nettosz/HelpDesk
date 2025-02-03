@@ -53,7 +53,7 @@ class User(db.Model):
     dep = db.Column(db.String, default="")
     admin = db.Column(db.Boolean, default=False)
     terceiro = db.Column(db.Boolean, default=False)
-
+    
     tickets = db.relationship('Ticket', backref='user',
     cascade="all, delete-orphan",
     lazy='dynamic')

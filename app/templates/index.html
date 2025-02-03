@@ -163,7 +163,6 @@
             .then(text => $("#forms").html(text))
         }
 
-
     </script>
 
 
@@ -180,6 +179,16 @@
       this.className += " active";
       });
     }
+
+    document.getElementById('delete_btn').addEventListener('click', function(event) {
+            // Display confirmation dialog
+            var confirmAction = confirm("Tem certeza que deseja excluir o item?");
+            
+            // If the user cancels, prevent the default action (following the link)
+            if (!confirmAction) {
+                event.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>

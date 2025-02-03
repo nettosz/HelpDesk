@@ -109,7 +109,7 @@
                 {%endif%}
 
                 {%if not terceiro%}
-                <a class="chact" href="{{url_for("bp.delete", data="ticket", id=chamado._id)}}">Excluir</a>
+                <a class="chact" id="delete_btn" href="{{url_for("bp.delete", data="ticket", id=chamado._id)}}">Excluir</a>
                 {%endif%}
             {%endif%}
                 <a class="chact" id="view-hist" href="#">Historico</a>
