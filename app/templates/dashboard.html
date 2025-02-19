@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpdesk Dashboard</title>
+</head>
+<body>
+    <div>
+        <div class="row">
+            <div class="col-12 text-white p-3">
+                <h1 class="text-center">Helpdesk Dashboard</h1>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12">
+                <div id="filter-form" class="bg-light p-3 rounded">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label for="start_date" class="form-label">Inicio:</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="end_date" class="form-label">Fim:</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button id="submit" class="btn btn-primary w-100">Filtro</button>
+                            <button id="save-as-pdf" class="btn btn-primary w-100">Salvar PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-dash">
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Tickets por usuario</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="status-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Tickets por prioridade</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="priority-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Tickets por Categoria</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="problem-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Tickets por Atendente</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="attendant-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Fechados ao longo do tempo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="closed-tickets-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="card-title">Chamados por departamento</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="deps-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        // Load all data initially
+        var allData = {{ data_json | safe }};
+
+        // Function to filter data by date range
+        function filterData(startDate, endDate) {
+            return allData.filter(ticket => {
+                const ticketDate = new Date(ticket['Data Abertura']);
+                return (!startDate || ticketDate >= new Date(startDate)) &&
+                       (!endDate || ticketDate <= new Date(endDate));
+            });
+        }
+
+        // Function to update visualizations
+        function updateVisualizations(startDate, endDate) {
+            const filteredData = filterData(startDate, endDate);
+
+            // Update Tickets por Autor
+            const authorCounts = {};
+            filteredData.forEach(ticket => {
+                authorCounts[ticket.Autor] = (authorCounts[ticket.Autor] || 0) + 1;
+            });
+            const authorData = [{
+                values: Object.values(authorCounts),
+                labels: Object.keys(authorCounts),
+                type: 'pie'
+            }];
+            Plotly.react('status-chart', authorData, { title: 'Tickets por Autor' });
+
+            // Update Ticket Priority Distribution
+            const priorityCounts = {};
+            filteredData.forEach(ticket => {
+                priorityCounts[ticket.Prioridade] = (priorityCounts[ticket.Prioridade] || 0) + 1;
+            });
+            const priorityData = [{
+                x: Object.keys(priorityCounts),
+                y: Object.values(priorityCounts),
+                type: 'bar'
+            }];
+            Plotly.react('priority-chart', priorityData, { title: 'Tickets por prioridade' });
+
+            // Update Tickets por Problema
+            const problemCounts = {};
+            filteredData.forEach(ticket => {
+                problemCounts[ticket.Categoria] = (problemCounts[ticket.Categoria] || 0) + 1;
+            });
+            const problemData = [{
+                values: Object.values(problemCounts),
+                labels: Object.keys(problemCounts),
+                type: 'pie'
+            }];
+            Plotly.react('problem-chart', problemData, { title: 'Tickets por categoria' });
+
+            // Update Tickets por Etado
+            const depsCounts = {};
+            filteredData.forEach(ticket => {
+                depsCounts[ticket.Departamento] = (depsCounts[ticket.Departamento] || 0) + 1;
+            });
+            const depsData = [{
+                values: Object.values(depsCounts),
+                labels: Object.keys(depsCounts),
+                type: 'pie'
+            }];
+            Plotly.react('est-chart', depsData, { title: 'Tickets por estado' });
+            
+            // Update Tickets per Attendant
+            const attendantCounts = {};
+            filteredData.forEach(ticket => {
+                attendantCounts[ticket.Attendant] = (attendantCounts[ticket.Attendant] || 0) + 1;
+            });
+            const attendantData = [{
+                x: Object.keys(attendantCounts),
+                y: Object.values(attendantCounts),
+                type: 'bar'
+            }];
+            Plotly.react('attendant-chart', attendantData, { title: 'Tickets por Atendente' });
+
+            // Gráfico de Linha: Chamados Fechados ao Longo do Tempo
+            const closedTicketsOverTime = {};
+            filteredData.forEach(ticket => {
+                if (ticket['Data Fechamento']) {
+                    const closeDate = ticket['Data Fechamento'].split('T')[0];
+                    closedTicketsOverTime[closeDate] = (closedTicketsOverTime[closeDate] || 0) + 1;
+                }
+            });
+            const closedTicketsData = [{
+                x: Object.keys(closedTicketsOverTime),
+                y: Object.values(closedTicketsOverTime),
+                type: 'bar',
+                name: 'Chamados Fechados'
+            }];
+            Plotly.react('closed-tickets-chart', closedTicketsData, { title: 'Chamados Fechados ao Longo do Tempo' });
+        }
+
+        // Function to save all plots as PDF
+        function savePlotsAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const charts = [
+                { id: 'status-chart', title: 'Tickets por Usuario' },
+                { id: 'priority-chart', title: 'Tickets por Prioridade' },
+                { id: 'problem-chart', title: 'Tickets por Categoria' },
+                { id: 'attendant-chart', title: 'Tickets por Atendente' },
+                { id: 'closed-tickets-chart', title: 'Fechados ao Longo do Tempo' },
+                { id: 'deps-chart', title: 'Chamados por Departamento' }
+            ];
+            let yOffset = 10;
+
+            charts.forEach((chart, index) => {
+                html2canvas(document.getElementById(chart.id)).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 180; // Width of the image in the PDF
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                    // Add chart title
+                    doc.setFontSize(16);
+                    doc.text(chart.title, 15, yOffset);
+                    yOffset += 10; // Add spacing after the title
+
+                    // Check if the image exceeds the page height
+                    if (yOffset + imgHeight > 280) {
+                        doc.addPage();
+                        yOffset = 10; // Reset yOffset for the new page
+                    }
+
+                    // Add the chart image
+                    doc.addImage(imgData, 'PNG', 15, yOffset, imgWidth, imgHeight);
+                    yOffset += imgHeight + 10; // Add spacing after the image
+
+                    // Save the PDF after the last chart
+                    if (index === charts.length - 1) {
+                        doc.save('dashboard.pdf');
+                    }
+                });
+            });
+        }
+
+        // Initial render
+        $(document).ready(function() {
+            updateVisualizations();
+
+            // Add event listener to the filter form
+            $('#submit').on('click', function() {
+                const startDate = $('#start_date').val();
+                const endDate = $('#end_date').val();
+                updateVisualizations(startDate, endDate);
+            });
+
+            // Add event listener to the save as PDF button
+            $('#save-as-pdf').on('click', function() {
+                savePlotsAsPDF();
+            });
+        });
+    </script>
+</body>
+</html>

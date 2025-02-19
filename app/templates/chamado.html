@@ -96,7 +96,11 @@
         {%endif%}
         <div class="att">
             {%if chamado.estado == "Aberto" or chamado.estado == "Em Atendimento"%}
-            <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Encerrar</a>
+                {%if admin%}
+                    <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Concluir</a>
+                {%else%}
+                    <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Cancelar</a>
+                {%endif%}
             {%endif%}
             
             {%if admin or terceiro%}
@@ -109,7 +113,7 @@
                 {%endif%}
 
                 {%if not terceiro%}
-                <a class="chact" id="delete_btn" href="{{url_for("bp.delete", data="ticket", id=chamado._id)}}">Excluir</a>
+                <a class="chact" id="delete_btn" onclick="confirm_link('{{url_for("bp.delete", data="ticket", id=chamado._id)}}')">Excluir</a>
                 {%endif%}
             {%endif%}
                 <a class="chact" id="view-hist" href="#">Historico</a>
@@ -122,18 +126,11 @@
         <h1 class="title-proc">
             Procedimentos:
         </h1>
-        {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
         <div class="div-row">
             <input type="text" class="form-control tcad" id="add_etp">
             <button class="btn btn-primary btn-etp" id="c_etp">add</button>
         </div>
-        {%else%}
-        <div class="div-row">
-            <input type="text" class="form-control tcad" id="add_etp" disabled>
-            <button class="btn btn-primary btn-etp" id="c_etp" disabled>add</button>
-        </div>
-        {%endif%}
-
+        
         <div id="div-etapas">
             
         </div>

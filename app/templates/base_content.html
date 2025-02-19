@@ -18,7 +18,7 @@
     </div>
     <div class="card">
         {%if admin%}
-        <a class="chact" id="delete_btn" href="{{url_for("bp.delete", data="proc", id=proc._id)}}">Excluir</a>
+        <a class="chact" id="delete_btn" onclick="confirm_link('{{url_for("bp.delete", data="proc", id=proc._id)}}')">Excluir</a>
         {%endif%}
     </div>
 </body>

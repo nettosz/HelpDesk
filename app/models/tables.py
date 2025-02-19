@@ -15,6 +15,7 @@ class Etapa(db.Model):
     texto = db.Column(db.String, nullable=False)
     ticket_id = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String, default="1")
+    user = db.Column(db.String, default="")
 
 class Ticket(db.Model):
     _id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -27,7 +28,7 @@ class Ticket(db.Model):
     periodo = db.Column(db.String)
     file = db.Column(db.String)
     autor = db.Column(db.String, nullable=False)
-
+    
     # Pessoa que esta resolvendo o chamado
     att = db.Column(db.String)
     att_email = db.Column(db.String)

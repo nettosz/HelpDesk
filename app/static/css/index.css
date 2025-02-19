@@ -5,6 +5,7 @@
 
     font-size: 14px;
 }
+  
 
 a {
     cursor: default;
@@ -22,6 +23,7 @@ h1 {
 
 p {
     color: white;
+    text-wrap: wrap;
 }
 
 h1, h2, p {
@@ -61,6 +63,7 @@ html, body{
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     width: 24.39%;
+    text-wrap: nowrap;
 
 }
 
@@ -396,6 +399,25 @@ html, body{
 
 .hist {
     margin: 5px;
+    background: white;
+    border-radius: 5px;
+}
+
+.hist p {
+    color: black;
+    text-wrap: auto;
+}
+
+.hist td {
+    text-wrap: auto;
+}
+
+.hist div {
+    text-wrap: auto;
+}
+
+.gmail_attr{
+    text-wrap: auto;
 }
 
 #hist-data {
@@ -407,6 +429,52 @@ html, body{
     margin-bottom: 5px;
 }
 
-.value {
-    text-wrap: wrap;
+.usuarios {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.name-black {
+    padding-left: 0.45rem;
+    border-radius: 20px;
+    background: #000000;
+}
+
+.container-dash {
+    overflow-y: auto;
+    max-height: 76vh;
+}
+
+.nav-link {
+    position: relative; /* Ensure the button can contain the pseudo-element */
+    transition: opacity 0.3s ease; /* Smooth transition for opacity */
+}
+
+.nav-link.loading {
+    opacity: 0.7; /* Reduce opacity to indicate loading */
+    pointer-events: none; /* Disable clicks while loading */
+}
+
+.nav-link.loading:after {
+    content: ""; /* Required for the pseudo-element */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px; /* Size of the spinner */
+    height: 20px; /* Size of the spinner */
+    margin-top: -10px; /* Center vertically */
+    margin-left: -10px; /* Center horizontally */
+    border: 3px solid #fff; /* Spinner color */
+    border-top: 3px solid transparent; /* Transparent top for spinning effect */
+    border-radius: 50%; /* Make it circular */
+    animation: spin 1s linear infinite; /* Spinning animation */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

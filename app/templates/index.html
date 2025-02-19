@@ -11,6 +11,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-3.0.0.min.js" charset="utf-8"></script>
+
+    <!-- Include html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Include jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    </head>
 
     <title>HelpDesk</title>
 </head>
@@ -24,21 +32,22 @@
                     <div id="userlat">
 
                     </div>
-                    <a class="nav-item nav-link nav-item-click" id="cham" href="#">Chamados Em Aberto</a>
+                    <a class="nav-item nav-link nav-item-click nav" id="cham" href="#">Chamados Em Aberto</a>
                     
-                    <a class="nav-item nav-link nav-item-click" id="chamr" href="#">Em Atendimento</a>
-                    <a class="nav-item nav-link nav-item-click" id="chamf" href="#">Historico de Chamados</a>
+                    <a class="nav-item nav-link nav-item-click nav" id="chamr" href="#">Em Atendimento</a>
+                    <a class="nav-item nav-link nav-item-click nav" id="chamf" href="#">Historico de Chamados</a>
                     
                     {%if admin%}
-                        <a class="nav-item nav-link nav-item-click" id="base" href="#">Base de Conhecimento</a>
-                        <a class="nav-item nav-link nav-item-click" id="cuser" href="#">Gereciar Usuarios</a>
-                        <a class="nav-item nav-link nav-item-click" id="ccat" href="#">Criar Categoria</a>
+                        <a class="nav-item nav-link nav-item-click nav" id="base" href="#">Base de Conhecimento</a>
+                        <a class="nav-item nav-link nav-item-click nav" id="cuser" href="#">Gereciar Usuarios</a>
+                        <a class="nav-item nav-link nav-item-click nav" id="ccat" href="#">Criar Categoria</a>
+                        <a class="nav-item nav-link nav-item-click" id="dash" href="#">Dashboard</a>
                     {%endif%}
                     
                     <a class="nav-item nav-link nav-item-click" id="sair" href="/logout">Sair</a>
                 </div>
             </div>
-            
+
             <div class="col block" id="root">
                 {%set messages = get_flashed_messages()%}
                 {%if messages%}
@@ -54,6 +63,23 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Tem certeza que deseja excluir o item?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmFollow">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -64,17 +90,9 @@
             .then(response => response.text())
             .then(text => $("#userlat").html(text))
 
-
         document.getElementById("cham").onclick = function (){
-            let filter = $("#search").val()
-            let f = ""
 
-            if (filter) {
-                let catf =  $("#catf").val()
-                f = "/"+filter+"@"+catf
-            }
-
-            const update_url = {{ url_for("bp.tickets")|tojson }}+f
+            const update_url = {{ url_for("bp.tickets")|tojson }}
 
             fetch(update_url)
             .then(response => response.text())
@@ -83,8 +101,6 @@
             fetch({{ url_for("bp.create_ticket")|tojson }})
             .then(response => response.text())
             .then(text => $("#forms").html(text))
-
-
         }
 
         {%if admin%}
@@ -121,18 +137,13 @@
             .then(response => response.text())
             .then(text => $("#forms").html(text))
         }
+
+
         {%endif%}
 
         document.getElementById("chamf").onclick = function (){
-            let filter = $("#search").val()
-            let f = ""
-            
-            if (filter) {
-                let catf =  $("#catf").val()
-                f = "/"+filter+"@"+catf
-            }
 
-            const update_url = {{ url_for("bp.tickets_close")|tojson }}+f
+            const update_url = {{ url_for("bp.tickets_close")|tojson }}
 
             fetch(update_url)
             .then(response => response.text())
@@ -144,27 +155,46 @@
         }
 
         document.getElementById("chamr").onclick = function (){
-            let filter = $("#search").val()
-            let f = ""
-            
-            if (filter) {
-                let catf =  $("#catf").val()
-                f = "/"+filter+"@"+catf
-            }
 
-            const update_url = {{ url_for("bp.tickets_resol")|tojson }}+f
+            const update_url = {{ url_for("bp.tickets_resol")|tojson }}
 
             fetch(update_url)
             .then(response => response.text())
             .then(text => $("#root").html(text))
-
+            
             fetch({{ url_for("bp.create_ticket")|tojson }})
             .then(response => response.text())
             .then(text => $("#forms").html(text))
         }
+    
+        document.getElementById("dash").onclick = function () {
+            const button = this; // Reference to the clicked button
+            const update_url = {{ url_for("bp.dashboard")|tojson }};
+
+            // Add loading class to the button
+            button.classList.add("loading");
+
+            fetch(update_url)
+                .then(response => response.text())
+                .then(text => {
+                    // Update the content of the root element
+                    $("#root").html(text);
+                })
+                .then(() => {
+                    // Hide the forms
+                    $("#forms").hide();
+                })
+                .finally(() => {
+                    // Remove the loading class after the content is loaded
+                    button.classList.remove("loading");
+                });
+        };
+
+        $(".nav").click(() => {
+            $("#forms").show()
+        })
 
     </script>
-
 
 <script>
     // Add active class to the current button (highlight it)
@@ -180,15 +210,17 @@
       });
     }
 
-    document.getElementById('delete_btn').addEventListener('click', function(event) {
-            // Display confirmation dialog
-            var confirmAction = confirm("Tem certeza que deseja excluir o item?");
-            
-            // If the user cancels, prevent the default action (following the link)
-            if (!confirmAction) {
-                event.preventDefault();
-            }
+    function confirm_link(url) {
+        let linkToFollow = null;
+    
+        linkToFollow = url // Store the link URL
+        $('#confirmationModal').modal('show'); // Show the modal
+    
+        $('#confirmFollow').on('click', function() {
+            window.location.href = linkToFollow; // Follow the link if confirmed
         });
+    }
     </script>
+    
 </body>
 </html>

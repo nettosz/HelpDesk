@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, flash, request, session, url_for, send_file
+from flask import Blueprint, redirect, render_template, flash, request, session, url_for, send_file, jsonify
 from app.models.tables import Ticket, User, Procedimento, Etapa
 from app.models.forms import Tickets, File, Procedimentos, Dep
 from datetime import datetime
@@ -6,10 +6,14 @@ import json
 import requests
 import os
 
+import pandas as pd
+from datetime import datetime
+
+
 from app.auth.auth import auth, get_google_provider_cfg, client, GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID
 
 from ..ultils import get_mails_list, insert, del_cat, load, remove_file,\
-    save, upload_file, send_mail, filter_by
+    save, upload_file, send_mail, filter_by, update_main_reponses
 
 from app.ext.db import db
 
@@ -93,7 +97,6 @@ def get_user_info():
 
     icon = user["icon"].split("/")[-1]
 
-    print(url_for("bp.create_user", id=user["id"], email=user["email"], nome=user["nome"], icon=icon))
     # Send user back to homepage
     return redirect(url_for("bp.create_user", id=user["id"], email=user["email"], nome=user["nome"], icon=icon))
 
@@ -141,7 +144,6 @@ def ticket(id):
         #Ordena a fila por prioridade
         fila = sorted(fila, key=lambda x: x.prioridade)
         
-        
         #posição do chamado na fila
         pos = fila.index(ticket) + 1
         
@@ -169,23 +171,22 @@ def tickets(filter=None):
         chamados=chamados)
     
     if session["admin"]:
-        chamados = Ticket
-        
-        if filter:
-            chamados = filter_by(chamados, filter, "Aberto")
-        else:
-            chamados = Ticket.query.filter_by(estado="Aberto").all()
+        chamados = Ticket.query.all()
+    else:
+        chamados = User.query.filter_by(_id=session["id"]).first().tickets.all()
 
-        print(chamados)
+        
+    if filter:
+        chamados = filter_by(chamados, filter)
+
+    if session["admin"]:
         return render_template("chamados.html",len=len,list=list,
             chamados=chamados,
             admin=session["admin"])
-    
-    chamados = User.query.filter_by(_id=session["id"]).first().tickets.filter(Ticket.estado == "Aberto").all()
-    return render_template("chamados.html",len=len,list=list,
-        chamados=chamados)
+    else:
+        return render_template("chamados.html",len=len,list=list,
+            chamados=chamados)
 
-@bp_app.route("/tickets_close/<filter>")
 @bp_app.route("/tickets_close")
 def tickets_close(filter=None):
     user = User.query.filter_by(_id=session["id"]).first()
@@ -198,10 +199,7 @@ def tickets_close(filter=None):
     if session["admin"]:
         chamados = Ticket
         
-        if filter:
-            chamados = filter_by(chamados, filter, "Fechado")
-        else:
-            chamados = Ticket.query.filter_by(estado="Fechado").all()
+        chamados = Ticket.query.filter_by(estado="Fechado").all()
             
         return render_template("chamados.html",len=len,list=list,
             chamados=chamados,
@@ -210,7 +208,6 @@ def tickets_close(filter=None):
     return render_template("chamados.html",len=len,list=list,
     chamados=User.query.filter_by(_id=session["id"]).first().tickets.filter(Ticket.estado == "Fechado").all())
 
-@bp_app.route("/tickets_resol/<filter>")
 @bp_app.route("/tickets_resol")
 def tickets_resol(filter=None):
     user = User.query.filter_by(_id=session["id"]).first()
@@ -223,10 +220,7 @@ def tickets_resol(filter=None):
     if session["admin"]:
         chamados = Ticket
         
-        if filter:
-            chamados = filter_by(chamados, filter, "Em Atendimento")
-        else:
-            chamados = Ticket.query.filter_by(estado="Em Atendimento").all()
+        chamados = Ticket.query.filter_by(estado="Em Atendimento").all()
 
         return render_template("chamados.html",len=len,list=list,
             chamados=chamados,
@@ -291,7 +285,7 @@ def create_ticket():
             data.user_id = session["id"]
             db.session.add(data)
             db.session.commit()
-
+            
             flash("Chamado aberto com sucesso!")
             
             templ = render_template("mail_template.html",
@@ -306,9 +300,9 @@ def create_ticket():
             nivel="Não definido"
             )
 
-            send_mail(templ=templ,
-            desc=f"TI AMCEL - Ticket de Suporte {data._id}",
-            mails=get_mails_list(data ,User, username))
+            # send_mail(templ=templ,
+            # desc=f"TI AMCEL - Ticket de Suporte {data._id}",
+            # mails=get_mails_list(data ,User, username))
             
             #Atualiza o historico do chamado
             if data.historico:
@@ -324,7 +318,7 @@ def create_ticket():
         return redirect("/home")
     
     terceiro = User.query.filter_by(_id=session["id"]).first().terceiro
-    return render_template("create_ticket.html", terceiro=terceiro, form=Tickets(), file=File(), cats=load("app/categories.json"), admin=session["admin"], chamados=Ticket.query.all())
+    return render_template("create_ticket.html", user_id=session["id"], terceiro=terceiro, form=Tickets(), file=File(), cats=load("app/categories.json"), admin=session["admin"], chamados=Ticket.query.all())
 
 @bp_app.route("/create_user/<id>/<email>/<nome>/<icon>", methods=["GET"])
 def create_user(id, email, nome, icon):
@@ -420,7 +414,7 @@ def update_state(state, id):
     obj = Ticket.query.filter_by(_id=id).first()
     user = User.query.filter_by(_id=session["id"]).first()
     
-    if user.nome == obj.att or not obj.att:
+    if user.nome == obj.att or not obj.att or user.dep == "TI":
         obj.estado = state
 
         if state == "Em Atendimento":
@@ -443,7 +437,7 @@ def update_state(state, id):
 
             send_mail(templ=templ,
             desc=f"TI AMCEL - Ticket de Suporte {obj._id}",
-            mails=get_mails_list(obj ,User, obj.autor))
+            mails=get_mails_list(obj ,User, obj.user_id))
 
             
             #Atualiza o historico do chamado
@@ -468,7 +462,7 @@ def update_state(state, id):
 
             send_mail(templ=templ,
             desc=f"TI AMCEL - Ticket de Suporte {obj._id}",
-            mails=get_mails_list(obj ,User, obj.autor))
+            mails=get_mails_list(obj ,User, obj.user_id))
 
             #Atualiza o historico do chamado
             if obj.historico:
@@ -519,7 +513,7 @@ def att_chamado():
     flash(f"Chamado reatribuido para: {nome}")
 
     templ = render_template("mail_template.html",
-    user=tck.att,
+    user=tck.autor,
     sys=tck.ativo,
     prob=tck.problema,
     info=form["just"],
@@ -546,8 +540,8 @@ def att_chamado():
     
     send_mail(templ=templ,
     desc=f"TI AMCEL - Ticket de Suporte {tck._id}",
-    mails=get_mails_list(tck ,User, session["nome"]))
-
+    mails=get_mails_list(tck ,User, tck.user_id))
+    
     return redirect("home-admin")
 
 #Cria uma categoria de chamados
@@ -568,6 +562,7 @@ def create_cat():
     return render_template("create_cat.html")
 
 #Exclui uma categoria de chamados 
+@bp_app.route("/delete_cat/<cat>")
 @bp_app.route("/delete_cat/<cat>/<sub>")
 def delete_cat(cat,sub):
     if cat:
@@ -576,6 +571,7 @@ def delete_cat(cat,sub):
         save("app/categories.json", file)
     
     return render_template("cats.html", cats=load("app/categorias.json"))
+
 
 @bp_app.route("/cats")
 def cats():
@@ -606,7 +602,7 @@ def update_etapa(etapa_id):
     chamado = Ticket.query.filter_by(_id=ticket_id).first()
 
     terceiro = User.query.filter_by(_id=session["id"]).first().terceiro
-    return render_template("etapas.html", etapas=etapas, admin=session["admin"], terceiro=terceiro, chamado=chamado)
+    return render_template("etapas.html", etapas=etapas, admin=session["admin"],terceiro=terceiro, chamado=chamado)
 
 @bp_app.route("/delete_etapa/<etapa_id>")
 def delete_etapa(etapa_id):
@@ -625,7 +621,7 @@ def delete_etapa(etapa_id):
 @bp_app.route("/create_etapa/<ticket_id>")
 @bp_app.route("/create_etapa/<ticket_id>/<value>")
 def create_etapa(ticket_id, value):
-    etapa = Etapa(texto=value, ticket_id=ticket_id)
+    etapa = Etapa(texto=value, ticket_id=ticket_id, user=session["nome"])
     db.session.add(etapa)
     db.session.commit()
 
@@ -633,7 +629,7 @@ def create_etapa(ticket_id, value):
     chamado = Ticket.query.filter_by(_id=ticket_id).first()
 
     templ = render_template("mail_template.html",
-    user=chamado.att,
+    user=chamado.autor,
     sys=chamado.ativo,
     prob=chamado.problema,
     type=5,
@@ -646,15 +642,14 @@ def create_etapa(ticket_id, value):
     
     send_mail(templ=templ,
     desc=f"TI AMCEL - Ticket de Suporte {chamado._id}",
-    mails=get_mails_list(chamado ,User, chamado.autor))
+    mails=get_mails_list(chamado ,User, chamado.user_id))
     
     #Atualiza o historico do chamado
     if chamado.historico:
         chamado.historico += f"<div class='hist'>{templ}</div>"
     else:
         chamado.historico = f"<div class='hist'>{templ}</div>"
-     
-
+    
     db.session.commit()
     
     terceiro = User.query.filter_by(_id=session["id"]).first().terceiro
@@ -670,8 +665,94 @@ def set_pr(id,pr):
     db.session.commit()
     
     terceiro = User.query.filter_by(_id=session["id"]).first().terceiro
+    
+    templ = render_template("mail_template.html",
+    data=datetime.today().strftime("%d/%m/%Y %H:%M"),
+    user=ticket.autor,
+    sys=ticket.ativo,
+    prob=ticket.problema,
+    info="",
+    type=1,
+    nome=session["nome"],
+    num=ticket._id,
+    nivel=ticket.prioridade
+    )
+    
+    send_mail(templ=templ,
+    desc=f"TI AMCEL - Ticket de Suporte {ticket._id}",
+    mails=get_mails_list(ticket ,User, ticket.user_id))
 
     return render_template("create_ticket.html", admin=session["admin"],terceiro=terceiro, chamados=Ticket.query.all())
+
+@bp_app.route("/update_user_dep/<user_id>")
+@bp_app.route("/update_user_dep/<user_id>/<dep>")
+def update_user_dep(user_id, dep):
+    user = User.query.filter_by(_id=user_id).first()
+    user.dep = dep
+    db.session.commit()
+    return render_template("users.html", users=User.query.all())
+
+#Atualiza o historico com os emails 
+@bp_app.route("/received_mails", methods = {"POST"})
+def update_mail_response():
+    if request.is_json:
+        data = request.get_json()  # Parse the incoming JSON data
+        try:
+
+            #Atualiza as emails dos usuarios
+            response = update_main_reponses(data)
+
+            return response
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"status": "error", "message": "Invalid request format. JSON required."}), 400
+
+
+
+# Sample data loading function
+def load_ticket_data():
+    # Query the Ticket table
+    tickets = Ticket.query.filter_by(estado="Fechado")
+    
+    # Convert to DataFrame
+    prioridades = {
+        1:"Emergencia",
+        2:"Urgente",
+        3:"Normal",
+        4:"Não urgente"
+    }
+
+    data = {
+        'Ticket ID': [ticket._id for ticket in tickets],
+        'Problema': [ticket.problema for ticket in tickets],
+        'Prioridade': [prioridades[ticket.prioridade] for ticket in tickets],
+        'Estado': [ticket.estado for ticket in tickets],
+        'Data Abertura': [ticket.data_hora_a for ticket in tickets],
+        'Data Fechamento': [ticket.data_hora_f for ticket in tickets],
+        'Autor': [ticket.autor for ticket in tickets],
+        'Departamento': [ticket.dep for ticket in tickets],
+        'Attendant': [ticket.att for ticket in tickets],  # Add attendant data
+        'Categoria' : [ticket.ativo for ticket in tickets]
+    }
+
+    df = pd.DataFrame(data)
+    return df
+
+# Flask route to serve the dashboard
+@bp_app.route('/dashboard')
+def dashboard():
+    df = load_ticket_data()
+
+    # Convert DataFrame to JSON for JavaScript
+    data_json = df.to_json(orient='records', date_format='iso')
+    return render_template("dashboard.html", data_json=data_json)
+        
+@bp_app.route("/configs")
+def configss():
+    from ..ultils import clear_duplicates
+    clear_duplicates()
+    return "OK"
 
 def configure(app):
     app.register_blueprint(bp_app)

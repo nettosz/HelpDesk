@@ -61,71 +61,23 @@
     </div>
     <div style="display: flex;flex-direction: row;" class="popup-container tcad">
         <div style="display: flex;flex-direction: row;">
-            {%if user.admin%}
             <input type="text" class="srch" id="search">
-            {%endif%}
-            <input type="hidden" name="option" id="catf" value="0">
         </div>
 
-        <div class="popup-content tcad">
-            <ul>
-                <li id="f0">0 = Usuario</li>
-                <li id="f1">1 = Departamento</li>
-                <li id="f2">2 = Nivel</li>
-                <li id="f3">3 = Categoria</li>
-                <li id="f4">4 = Descriçao</li>
-            </ul>
-        </div>
         <script>
-            $("#f0").click(() => {
-                $("#catf").val("0")
 
-                $("#f0").addClass("selected")
-                $("#f1").removeClass("selected")
-                $("#f2").removeClass("selected")
-                $("#f3").removeClass("selected")
-                $("#f4").removeClass("selected")
-            })
+        $('#search').change(() => {
+            // Get the filter value from the search input
+            let filter = $("#search").val().toLowerCase(); // Convert to lowercase for case-insensitive search
 
-            $("#f1").click(() => {
-                $("#catf").val("1")
-
-                $("#f0").removeClass("selected")
-                $("#f1").addClass("selected")
-                $("#f2").removeClass("selected")
-                $("#f3").removeClass("selected")
-                $("#f4").removeClass("selected")
-            })
-
-            $("#f2").click(() => {
-                $("#catf").val("2")
-
-                $("#f0").removeClass("selected")
-                $("#f1").removeClass("selected")
-                $("#f2").addClass("selected")
-                $("#f3").removeClass("selected")
-                $("#f4").removeClass("selected")
-            })
-
-            $("#f3").click(() => {
-                $("#catf").val("3")
-
-                $("#f0").removeClass("selected")
-                $("#f1").removeClass("selected")
-                $("#f2").removeClass("selected")
-                $("#f3").addClass("selected")
-                $("#f4").removeClass("selected")
-            })
-
-            $("#f4").click(() => {
-                $("#catf").val("4")
-
-                $("#f0").removeClass("selected")
-                $("#f1").removeClass("selected")
-                $("#f2").removeClass("selected")
-                $("#f3").removeClass("selected")
-                $("#f4").addClass("selected")
-            })
+            
+            const update_url = {{ url_for("bp.tickets")|tojson }}+filter 
+            
+            fetch(update_url)
+            .then(response => response.text())
+            .then(text => $("#root").html(text))
+            
+        });
         </script>
     </div>
 </div>

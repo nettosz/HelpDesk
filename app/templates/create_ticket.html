@@ -24,7 +24,11 @@
                         
                         <div class="pbtns">
                             <input type="hidden" value="{{chamado._id}}" id="chid{{chamado._id}}">
-
+                            
+                            <div>
+                                <img style="background-color: black;" class="nu bset" id="delete_btn" src="{{ url_for('static', filename='files/icons/trash.png') }}" alt="" onclick="confirm_link('{{url_for("bp.delete", data="ticket", id=chamado._id)}}')">
+                            </div>
+                            
                             <div class="em bset" id="setm{{chamado._id}}">
                             </div>
 
@@ -36,7 +40,8 @@
                         
                             <div class="nu bset" id="setnu{{chamado._id}}">
                             </div>
-                        </div>
+
+                            </div>
                         </div>
 
                 </div> 
@@ -83,7 +88,7 @@
         </script>
         {%endif%}
         {%endfor%}
-        </div>
+    </div>
 </div>
 {%elif not terceiro%}
 <div class="ctickets">
@@ -109,6 +114,44 @@
         </div>
     </form>
 </div>
+
+<div class="card card-body overflow-new tcad">
+    <h1 class="title">
+        Meus chamados em espera:
+    </h1>
+
+    {%for chamado in chamados%}
+        {%if chamado.p_defined == "0" and chamado.user_id == user_id%}
+            <div class="cat">
+                <p>
+                    Problema: {{chamado.problema}}
+                </p>
+                <p>
+                    Status: {{chamado.estado}}
+                </p>
+                
+                <div class="prior">
+                    <div>
+                        <p>
+                            Aberto por: {{chamado.autor}}
+                        </p>
+                    </div>
+                    
+                    <div class="pbtns">
+                        <input type="hidden" value="{{chamado._id}}" id="chid{{chamado._id}}">
+                        
+                        <div>
+                            <img style="background-color: black;" class="nu bset" id="delete_btn" src="{{ url_for('static', filename='files/icons/trash.png') }}" alt="" onclick="confirm_link('{{url_for("bp.delete", data="ticket", id=chamado._id)}}')">
+                        </div>
+
+                        </div>
+                    </div>
+
+            </div> 
+    {%endif%}
+    {%endfor%}
+</div>
+
 {%else%}
 <div>
     ...

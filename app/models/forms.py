@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField
 from wtforms.validators import DataRequired
 from flask_wtf.file import FileField
+from wtforms import StringField, SelectField, TextAreaField
 
 ##
 ## Declaração dos Formularios com Wtforms
@@ -21,7 +21,7 @@ class Procedimentos(FlaskForm):
         self.procedimento.data = data.procedimento
 
 class Tickets(FlaskForm):
-    problema = StringField("Problema", validators=[DataRequired()])
+    problema = TextAreaField("Problema", validators=[DataRequired()])
     #prioridade = SelectField('Prioridade',choices=[("1", "Emergencia"),("2", "Urgente"), ("3", "Normal"), ("4", "Não Urgente")], coerce=str)
 
     def insert_data(self, data):
@@ -30,7 +30,6 @@ class Tickets(FlaskForm):
         
 class Dep(FlaskForm):
     dep = SelectField("departamento", choices=[
-    ("TI", "TI"),
     ("Colheita", "Colheita"),
     ("Geoprocessamento", "Geoprocessamento"),
     ("Juridico", "Juridico"),
@@ -45,7 +44,16 @@ class Dep(FlaskForm):
     ("Compras", "Compras"),
     ("Soja", "Soja"),
     ("GFundiário", "GFundiário"),
-    ("BRinfo", "BRinfo")
+    ("BRinfo", "BRinfo"),
+    ("Controladoria", "Controladoria"),
+    ("RSC", "RSC"),
+    ("Recursos Humanos", "Recursos Humanos"),
+    ("Sivicultura", "Sivicultura"),
+    ("Viveiro", "Viveiro"),
+    ("Estoque", "Estoque"),
+    ("Planejamento", "Planejamento")
+
+
     ], coerce=str)
 
     def insert_data(self, data):

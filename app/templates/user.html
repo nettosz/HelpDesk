@@ -27,8 +27,11 @@
             Usuario: Normal
         </p>
         {%endif%}
+        <p>
+            <input type="text" id="mudadep" placeholder="Departamento" class="form-control tcad">
+        </p>
         <div>
-            <a class="chact" id="delete_btn" href="{{url_for("bp.delete", data="user", id=user._id)}}">Excluir</a>
+            <a class="chact" id="delete_btn" onclick="confirm_link('{{url_for("bp.delete", data="user", id=user._id)}}')">Excluir</a>
             {%if user.admin%}
                 <a class="chact" href="{{url_for("bp.make_admin", data="0", id=user._id)}}">Desfazer Admin</a>
             {%else%}
@@ -40,11 +43,27 @@
             {%else%}
                 <a class="chact" href="{{url_for("bp.make_terceiro", data="1", id=user._id)}}">Tornar Terceiro</a>
             {%endif%}
+            
+            <button id="envdep" class="chact">
+                Mudar Departamento
+            </button>
 
             <p>
                 Excluir apaga todos os chamados do usuario
             </p>
         </div>
     </div>
+
+    <script>
+        $("#envdep").click(
+            () => {
+                fetch({{ url_for("bp.update_user_dep",user_id=user._id)|tojson }} + "/" + $("#mudadep").val())
+                .then(response => response.text())
+                .then(text => {
+                    $("#root").html(text)
+                })
+            }
+        )
+    </script>
 </body>
 </html>     

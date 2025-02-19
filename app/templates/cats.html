@@ -10,7 +10,7 @@
         <div class="prioridade">
             {%for cat in cats.keys()%}
             <p>
-                <a class="btn btn-primary cats-btn" data-toggle="collapse" href="#{{cat}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-primary pri" data-toggle="collapse" href="#{{cat}}" role="button" aria-expanded="false" aria-controls="collapseExample">
                   {{cat}}
                 </a>
             </p>
@@ -25,10 +25,10 @@
                             $("#{{scat}}").dblclick(
                                 () => {
                                     fetch("/delete_cat/{{cat}}/{{scat}}").then(data => {
-                                        $("#root").html(data)
+                                        $("#{{scat}}").hide()
                                     })
                                 }
-                            )
+                        )
                         </script>
                         {%endfor%}
                     {%endif%}
@@ -37,6 +37,7 @@
             {%endfor%}
         </div>
     </div>
+</script>
 </div>
 </body>
 </html>

@@ -7,13 +7,13 @@
         {%for etapa in etapas%}
         {%if etapa.status == "1"%}
         <div class="card card-body">
+            <div class="name-black">
+                {{etapa.user}}
+            </div>
             <a href="#" class="cat etcard" id="ch-2">
-                <p class="text-wrap text-break">
+                <p class="text-wrap text-break" style="overflow-y: auto;">
                     {{etapa.texto}}
                 </p>
-                <div class="u">
-
-                </div>
             </a>
             {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
             <div>
@@ -40,16 +40,17 @@
         {%for etapa in etapas%}
         {%if etapa.status == "0"%}
         <div class="card card-body">
+            <div class="name-black">
+                {{etapa.user}}
+            </div>
             <a href="#" class="cat etcard" id="ch-2">
-                <p class="text-wrap text-break">
+                <p class="text-wrap text-break" style="overflow-y: auto;">
                     {{etapa.texto}}
 
                 </p>
                 
-                <div class="nu">
-
-                </div>
             </a>
+
             {%if admin or terceiro and chamado.estado == "Em Atendimento"%}
             <div>
                 <button class="btn btn-primary" id="et_{{etapa._id}}">
