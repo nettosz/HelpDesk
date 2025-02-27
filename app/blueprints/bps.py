@@ -13,7 +13,7 @@ from datetime import datetime
 from app.auth.auth import auth, get_google_provider_cfg, client, GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID
 
 from ..ultils import get_mails_list, insert, del_cat, load, remove_file,\
-    save, upload_file, send_mail, filter_by, update_main_reponses
+    save, upload_file, send_mail, filter_by, update_main_reponses, clear_duplicates
 
 from app.ext.db import db
 
@@ -27,6 +27,21 @@ bp_app = Blueprint("bp", __name__)
 @bp_app.route("/save-backup")
 def backup():
     backup_file_path = "/home/HelpDeskPython/db.sqlite"
+    
+    if not session.get("admin"):
+        flash("Access denied: Admins only.", "error")
+        return redirect(url_for("bp.index"))
+
+    if not os.path.exists(backup_file_path):
+        flash("Backup file not found.", "error")
+        return redirect(url_for("bp.index"))
+
+    return send_file(backup_file_path, as_attachment=True)
+
+## Endpoint para download das categorias, somente admin
+@bp_app.route("/save-cats")
+def save_cats():
+    backup_file_path = "/home/HelpDeskPython/app/categories.json"
     
     if not session.get("admin"):
         flash("Access denied: Admins only.", "error")
@@ -701,14 +716,12 @@ def update_mail_response():
 
             #Atualiza as emails dos usuarios
             response = update_main_reponses(data)
-
+            clear_duplicates()
             return response
         except Exception as e:
             return jsonify({"error": str(e)}), 500
     else:
         return jsonify({"status": "error", "message": "Invalid request format. JSON required."}), 400
-
-
 
 # Sample data loading function
 def load_ticket_data():

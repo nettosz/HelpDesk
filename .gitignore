@@ -13,6 +13,7 @@ ENV/
 # Flask
 instance/
 *.sqlite
+*.json
 
 # VS Code
 .vscode/

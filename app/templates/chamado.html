@@ -96,7 +96,7 @@
         {%endif%}
         <div class="att">
             {%if chamado.estado == "Aberto" or chamado.estado == "Em Atendimento"%}
-                {%if admin%}
+                {%if admin or user.dep == 'BRINFO'%}
                     <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Concluir</a>
                 {%else%}
                     <a class="chact" href="{{url_for("bp.update_state", state="Fechado", id=chamado._id)}}">Cancelar</a>

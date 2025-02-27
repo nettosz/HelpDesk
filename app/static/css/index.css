@@ -83,6 +83,10 @@ html, body{
     border-right: 1px solid #343a40;
 }
 
+.col {
+    border-right: 1px solid #343a40;
+}
+
 .btn {
     background: #495057;
     color: #ffffff;
